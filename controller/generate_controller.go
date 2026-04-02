@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
 	"json-mock-generator/client"
 	"json-mock-generator/utils"
 )
@@ -16,6 +15,10 @@ func GenerateData(schema map[string]any) (any, error) {
 			continue
 		}
 
+		if utils.IsSchemaOutput(result) {
+			continue
+		}
+
 		if utils.IsValidJSON(result) {
 			var parsed any
 			json.Unmarshal([]byte(result), &parsed)
@@ -23,5 +26,5 @@ func GenerateData(schema map[string]any) (any, error) {
 		}
 	}
 
-	return nil, errors.New("failed to generate valid JSON")
+	return utils.GenerateFallback(schema), nil
 }
