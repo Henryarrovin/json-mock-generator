@@ -22,8 +22,7 @@ func GenerateHandler(c *gin.Context) {
 		return
 	}
 
-	// c.JSON(http.StatusOK, models.GenerateResponse{
-	// 	Data: data,
-	// })
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, models.GenerateResponse{
+		Data: data,
+	})
 }
