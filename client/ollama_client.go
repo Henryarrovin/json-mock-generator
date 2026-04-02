@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
-const (
-	BaseURL = "http://localhost:11434/api/generate"
-	Model   = "phi"
-)
+func getEnv(key, fallback string) string {
+	if val := os.Getenv(key); val != "" {
+		return val
+	}
+	return fallback
+}
 
 type OllamaRequest struct {
 	Model  string `json:"model"`
@@ -20,8 +23,11 @@ type OllamaRequest struct {
 }
 
 func CallOllama(prompt string) (string, error) {
+	baseURL := getEnv("OLLAMA_URL", "http://ollama:11434/api/generate")
+	model := getEnv("OLLAMA_MODEL", "tinyllama")
+
 	reqBody := OllamaRequest{
-		Model:  Model,
+		Model:  model,
 		Prompt: prompt,
 		Stream: false,
 	}
@@ -31,7 +37,7 @@ func CallOllama(prompt string) (string, error) {
 		return "", err
 	}
 
-	resp, err := http.Post(BaseURL, "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(baseURL, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return "", err
 	}
