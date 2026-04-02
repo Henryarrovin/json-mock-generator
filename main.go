@@ -1,20 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"json-mock-generator/client"
+	"json-mock-generator/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	fmt.Println("OLLAMA URL:", client.BaseURL)
-	fmt.Println("Model:", client.Model)
+	r := gin.Default()
 
-	response, err := client.CallOllama("Say hello in one sentence")
-	if err != nil {
-		fmt.Println("Error Connecting:", err)
-		return
-	}
+	r.POST("/generate", service.GenerateHandler)
 
-	fmt.Println("Response:")
-	fmt.Println(response)
+	r.Run(":8080")
 }
