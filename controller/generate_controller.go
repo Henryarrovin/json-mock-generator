@@ -15,13 +15,18 @@ func GenerateData(schema map[string]any) (any, error) {
 			continue
 		}
 
-		if utils.IsSchemaOutput(result) {
+		cleanData := utils.ExtractJSON(result)
+		if cleanData == "" {
 			continue
 		}
 
-		if utils.IsValidJSON(result) {
+		if utils.IsSchemaOutput(cleanData) {
+			continue
+		}
+
+		if utils.IsValidJSON(cleanData) {
 			var parsed any
-			json.Unmarshal([]byte(result), &parsed)
+			json.Unmarshal([]byte(cleanData), &parsed)
 			return parsed, nil
 		}
 	}
