@@ -8,22 +8,23 @@ func BuildPrompt(schema map[string]any) string {
 	return `You are a JSON generator.
 
 Task:
-Generate a sample JSON object that matches the given JSON schema.
+Generate ONLY a valid JSON object from the schema.
 
 STRICT RULES:
-- Output ONLY valid JSON
-- DO NOT return the schema
 - DO NOT include "type", "properties", or schema keywords
-- Generate actual values (names, numbers, booleans, arrays)
-- Follow schema structure exactly
+- DO NOT wrap values inside objects unless required
+- Arrays must contain direct values (e.g., ["a","b"])
+- Objects must contain only actual fields, not schema info
+- Output ONLY JSON
 
 Example:
 Schema:
-{"type":"object","properties":{"name":{"type":"string"}}}
+{"type":"object","properties":{"tags":{"type":"array","items":{"type":"string"}}}}
 
 Output:
-{"name":"John"}
+{"tags":["tag1","tag2"]}
 
 Now generate for this schema:
+
 ` + string(schemaBytes)
 }
