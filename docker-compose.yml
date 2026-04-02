@@ -7,6 +7,9 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "ollama serve & sleep 5 && ollama pull tinyllama && wait"
 
   app:
     image: henryarrovin/json-mock-generator:latest
