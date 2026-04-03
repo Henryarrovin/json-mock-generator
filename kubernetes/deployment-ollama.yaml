@@ -22,10 +22,13 @@ spec:
             - "-c"
             - |
               set -e
+              # Start Ollama server in the background
+              ollama serve & 
+              sleep 5  # wait for server to be ready
               echo "Pulling tinyllama model..."
               ollama pull tinyllama
-              echo "Starting Ollama server..."
-              ollama serve
+              # Bring server process to foreground
+              fg
           ports:
             - containerPort: 11434
           volumeMounts:
