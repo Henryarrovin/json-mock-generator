@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: json-mock-config
+data:
+  OLLAMA_URL: "http://ollama:11434/api/generate"
+  OLLAMA_MODEL: "tinyllama"

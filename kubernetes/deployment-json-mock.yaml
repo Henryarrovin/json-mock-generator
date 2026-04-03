@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-mock-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: json-mock-generator
+  template:
+    metadata:
+      labels:
+        app: json-mock-generator
+    spec:
+      containers:
+        - name: json-mock-generator
+          image: henryarrovin/json-mock-generator:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: json-mock-config
