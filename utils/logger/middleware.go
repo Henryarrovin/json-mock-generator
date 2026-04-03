@@ -10,6 +10,16 @@ import (
 	"go.uber.org/zap"
 )
 
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
+}
+
 func RequestLoggerMiddleware(c *gin.Context) {
 	start := time.Now()
 
@@ -22,7 +32,10 @@ func RequestLoggerMiddleware(c *gin.Context) {
 	if c.Request.Body != nil {
 		bodyBytes, _ = io.ReadAll(c.Request.Body)
 	}
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes)) // restore body
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+	c.Writer = blw
 
 	c.Next()
 
@@ -36,5 +49,6 @@ func RequestLoggerMiddleware(c *gin.Context) {
 		zap.Int("status", statusCode),
 		zap.Duration("latency", latency),
 		zap.ByteString("request_body", bodyBytes),
+		zap.ByteString("response_body", blw.body.Bytes()),
 	)
 }
