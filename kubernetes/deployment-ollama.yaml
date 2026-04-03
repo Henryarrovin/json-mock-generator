@@ -17,6 +17,15 @@ spec:
       containers:
         - name: ollama
           image: ollama/ollama:latest
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              set -e
+              echo "Pulling tinyllama model..."
+              ollama pull tinyllama
+              echo "Starting Ollama server..."
+              ollama serve
           ports:
             - containerPort: 11434
           volumeMounts:
