@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              echo "Starting Ollama server..."
+              # Start server in background
+              ollama serve &
+              # wait for server to be ready
+              sleep 10
+              echo "Pulling tinyllama model..."
+              # retry up to 5 times if pull fails
+              for i in $(seq 1 5); do
+                ollama pull tinyllama && break
+                echo "Retry $i/5..."
+                sleep 5
+              done
+              echo "Server ready and model pulled."
+              # keep the container running
+              wait
+          ports:
+            - containerPort: 11434
+          volumeMounts:
+            - name: ollama-data
+              mountPath: /root/.ollama
+      volumes:
+        - name: ollama-data
+          emptyDir: {}
