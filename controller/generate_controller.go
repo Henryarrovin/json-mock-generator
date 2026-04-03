@@ -23,6 +23,10 @@ func GenerateData(c *gin.Context, schema map[string]any) (any, error) {
 			)
 			continue
 		}
+		logger.Log.Sugar().Info("info.generate_controller.result_data",
+			zap.String("correlation_id", corrID),
+			zap.String("result_data", result),
+		)
 
 		cleanData := utils.ExtractJSON(result)
 		if cleanData == "" {
@@ -32,6 +36,10 @@ func GenerateData(c *gin.Context, schema map[string]any) (any, error) {
 			)
 			continue
 		}
+		logger.Log.Sugar().Info("info.generate_controller.clean_data_after_extract_json",
+			zap.String("correlation_id", corrID),
+			zap.String("clean_data_after_extract_json", cleanData),
+		)
 
 		if utils.IsSchemaOutput(cleanData) {
 			logger.Log.Sugar().Warn("warn.generate_controller.is_schema_validation.tried_time: ",
@@ -40,11 +48,15 @@ func GenerateData(c *gin.Context, schema map[string]any) (any, error) {
 			)
 			continue
 		}
+		logger.Log.Sugar().Info("info.generate_controller.clean_data_after_schema_validation",
+			zap.String("correlation_id", corrID),
+			zap.String("clean_data_after_extract_json", cleanData),
+		)
 
 		if utils.IsValidJSON(cleanData) {
 			var parsed any
 			json.Unmarshal([]byte(cleanData), &parsed)
-			logger.Log.Sugar().Info("info.generate_controller.generate_success",
+			logger.Log.Sugar().Info("info.generate_controller.clean_data",
 				zap.String("correlation_id", corrID),
 				zap.String("clean_data", cleanData),
 			)
